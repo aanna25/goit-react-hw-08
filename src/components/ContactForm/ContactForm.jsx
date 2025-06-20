@@ -2,8 +2,8 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import style from "./ContactForm.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import { selectLoading } from "../../redux/contactsSlice";
-import { addContact } from "../../redux/contactsOps";
+import { selectLoading } from "../../redux/contacts/slice";
+import { addContact } from "../../redux/contacts/operations";
 
 const ContactSchema = Yup.object().shape({
   name: Yup.string().min(3).max(50).required("Required"),
