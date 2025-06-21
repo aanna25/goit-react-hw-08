@@ -1,3 +1,7 @@
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { selectIsLoggedIn } from "../redux/auth/selectors";
 import LoginForm from "../components/LoginForm/LoginForm";
 
 const style = {
@@ -26,6 +30,15 @@ const style = {
 };
 
 export default function LoginPage() {
+  const isLoggedIn = useSelector(selectIsLoggedIn);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/contacts", { replace: true });
+    }
+  }, [isLoggedIn, navigate]);
+
   return (
     <>
       <title>Login</title>
