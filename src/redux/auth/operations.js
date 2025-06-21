@@ -10,7 +10,7 @@ const setAuthHeader = (token) => {
 };
 
 const clearAuthHeader = () => {
-  instance.defaults.headers.common.Authorization = "";
+  delete instance.defaults.headers.common.Authorization;
 };
 
 export const register = createAsyncThunk(
@@ -22,7 +22,7 @@ export const register = createAsyncThunk(
       localStorage.setItem("token", res.data.token);
       return res.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
 );
@@ -33,9 +33,10 @@ export const login = createAsyncThunk(
     try {
       const res = await instance.post("/users/login", credentials);
       setAuthHeader(res.data.token);
+      localStorage.setItem("token", res.data.token);
       return res.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
 );
@@ -46,7 +47,7 @@ export const logout = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
     clearAuthHeader();
     localStorage.removeItem("token");
   } catch (error) {
-    return thunkAPI.rejectWithValue(error.message);
+    return thunkAPI.rejectWithValue(error.response?.data || error.message);
   }
 });
 
@@ -59,12 +60,13 @@ export const refreshUser = createAsyncThunk(
     if (!token) {
       return thunkAPI.rejectWithValue("No token");
     }
+
     try {
       setAuthHeader(token);
       const res = await instance.get("/users/current");
       return res.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
 );
