@@ -12,12 +12,12 @@ const style = {
     fontWeight: 500,
     fontSize: 48,
     textAlign: "center",
-    color: "#1976d2", // Додано колір для гармонії з дизайном
+    color: "#1976d2", 
     marginBottom: "20px",
   },
   formContainer: {
     width: "100%",
-    maxWidth: "400px", // Обмеження ширини форми
+    maxWidth: "400px", 
     padding: "20px",
     backgroundColor: "#fff",
     borderRadius: "8px",
