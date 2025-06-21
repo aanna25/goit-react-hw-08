@@ -14,20 +14,11 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(register.pending, (state) => {
-        state.isLoading = true;
-      })
       .addCase(register.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isLoggedIn = true;
         state.isLoading = false;
-      })
-      .addCase(register.rejected, (state) => {
-        state.isLoading = false;
-      })
-      .addCase(login.pending, (state) => {
-        state.isLoading = true;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.user = action.payload.user;
@@ -35,20 +26,11 @@ const authSlice = createSlice({
         state.isLoggedIn = true;
         state.isLoading = false;
       })
-      .addCase(login.rejected, (state) => {
-        state.isLoading = false;
-      })
-      .addCase(logout.pending, (state) => {
-        state.isLoading = true; // Додано для відстеження стану
-      })
       .addCase(logout.fulfilled, (state) => {
         state.user = { name: null, email: null };
         state.token = null;
         state.isLoggedIn = false;
         state.isLoading = false;
-      })
-      .addCase(logout.rejected, (state) => {
-        state.isLoading = false; // Додано для коректного скидання
       })
       .addCase(refreshUser.pending, (state) => {
         state.isRefreshing = true;

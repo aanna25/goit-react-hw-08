@@ -6,60 +6,65 @@ const instance = axios.create({
 });
 
 const setAuthHeader = (token) => {
-  instance.defaults.headers.Authorization = token ? `Bearer ${token}` : "";
+  instance.defaults.headers.common.Authorization = `Bearer ${token}`;
+};
+
+const clearAuthHeader = () => {
+  instance.defaults.headers.common.Authorization = "";
 };
 
 export const register = createAsyncThunk(
   "auth/register",
-  async (userData, { rejectWithValue }) => {
+  async (credentials, thunkAPI) => {
     try {
-      const { data } = await instance.post("/users/signup", userData);
-      setAuthHeader(data.token);
-      return data;
+      const res = await instance.post("/users/signup", credentials);
+      setAuthHeader(res.data.token);
+      localStorage.setItem("token", res.data.token);
+      return res.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
 
 export const login = createAsyncThunk(
   "auth/login",
-  async (userData, { rejectWithValue }) => {
+  async (credentials, thunkAPI) => {
     try {
-      const { data } = await instance.post("/users/login", userData);
-      setAuthHeader(data.token);
-      return data;
+      const res = await instance.post("/users/login", credentials);
+      setAuthHeader(res.data.token);
+      return res.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
 
-export const logout = createAsyncThunk(
-  "auth/logout",
-  async (_, { rejectWithValue, getState }) => {
-    try {
-      const { auth } = getState();
-      setAuthHeader(auth.token);
-      await instance.post("/users/logout");
-      setAuthHeader();
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
+export const logout = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
+  try {
+    await instance.post("/users/logout");
+    clearAuthHeader();
+    localStorage.removeItem("token");
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.message);
   }
-);
+});
 
 export const refreshUser = createAsyncThunk(
   "auth/refresh",
-  async (_, { rejectWithValue, getState }) => {
-    const { auth } = getState();
-    if (!auth.token) return rejectWithValue("No token");
-    setAuthHeader(auth.token);
+  async (_, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const token = state.auth.token || localStorage.getItem("token");
+
+    if (!token) {
+      return thunkAPI.rejectWithValue("No token");
+    }
     try {
-      const { data } = await instance.get("/users/current");
-      return data;
+      setAuthHeader(token);
+      const res = await instance.get("/users/current");
+      return res.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );

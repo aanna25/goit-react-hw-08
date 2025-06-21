@@ -18,7 +18,7 @@ export default function HomePage() {
       <title>Welcome</title>
       <div style={style.container}>
         <h1 style={style.title}>
-          Task manager welcome page{" "}
+          Join us and keep your contacts safe and organized!{" "}
           <span role="img" aria-label="Greeting icon">
             💁‍♀️
           </span>

@@ -1,5 +1,6 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/auth/operations";
 import style from "./LoginForm.module.css";
@@ -11,30 +12,44 @@ const LoginSchema = Yup.object().shape({
 
 export default function LoginForm() {
   const dispatch = useDispatch();
+  const initialValues = {
+    email: "",
+    password: "",
+  };
 
-  const handleSubmit = (values, { resetForm }) => {
-    dispatch(login(values));
-    resetForm();
+  const handleSubmit = async (values) => {
+    try {
+      const data = await dispatch(login(values)).unwrap();
+      toast.success(`${data.user.name} sucsesfully login`);
+    } catch {
+      toast.error("Something went wrong, please try different data.");
+    }
   };
 
   return (
     <Formik
-      initialValues={{ email: "", password: "" }}
+      initialValues={initialValues}
       validationSchema={LoginSchema}
       onSubmit={handleSubmit}
     >
-      <Form>
-        <label>
+      <Form className={style.form}>
+        <label className={style.label}>
           Email
-          <Field type="email" name="email" />
+          <Field type="email" name="email" className={style.input} />
           <ErrorMessage name="email" component="div" className={style.error} />
         </label>
-        <label>
+        <label className={style.label}>
           Password
-          <Field type="password" name="password" />
-          <ErrorMessage name="password" component="ErrorMessage" />
+          <Field type="password" name="password" className={style.input} />
+          <ErrorMessage
+            name="password"
+            component="ErrorMessage"
+            className={style.error}
+          />
         </label>
-        <button type="submit">Login</button>
+        <button type="submit" className={style.button}>
+          Login
+        </button>
       </Form>
     </Formik>
   );

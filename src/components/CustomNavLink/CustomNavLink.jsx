@@ -5,7 +5,7 @@ export default function CustomNavLink({ to, children }) {
     <NavLink
       to={to}
       style={({ isActive }) => ({
-        color: isActive ? "blue" : "black",
+        color: isActive ? "blue" : "white",
         marginRight: "15px",
       })}
     >
